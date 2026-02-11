@@ -7,6 +7,7 @@ sleep 5
 
 echo "Switching traffic..."
 # update nginx upstream
+sleep 4
 
 echo "Stopping old version..."
-pkill -SIGTERM -f app-v1/server.js
+pkill -SIGTERM -f apps/app-v1/server.js
