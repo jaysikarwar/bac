@@ -1,11 +1,9 @@
 const express = require("express");
+const cors = require('cors')
 const app = express();
 
 const PORT = 3001;
-
-const server = app.listen(PORT, () => {
-  console.log(`App v1 running on port ${PORT}`);
-});
+app.use(cors())
 
 app.get("/", (req, res) => {
   res.send("Hello from Version 1");
@@ -27,8 +25,16 @@ const shutdown = (signal) => {
 };
 
 process.on("SIGTERM", shutdown);
-process.on("SIGINT", shutdown); // CTRL+C
+process.on("SIGINT", shutdown);
 
 app.get("/version", (req, res) => {
-  res.json({ version: "v1" });
+  res.json({
+    version: "v1",
+    status: "active"
+  });
+});
+
+
+app.listen(PORT, () => {
+    console.log(`App v1 running on port ${PORT}`);
 });
