@@ -6,7 +6,7 @@ Write-Host "Starting GREEN (v2)..."
 $v2Path = "$backendDir\apps\app-v2\server.js"
 Start-Process node -ArgumentList "`"$v2Path`"" -NoNewWindow
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 30
 
 Write-Host "Stopping BLUE (v1) gracefully..."
 

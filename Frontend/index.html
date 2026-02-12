@@ -1,58 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Zero Downtime Deployment Demo</title>
+  <meta charset="UTF-8">
+  <title>Zero Downtime Deployment Dashboard</title>
   <style>
     body {
-      font-family: Arial;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 20px;
       text-align: center;
-      margin-top: 60px;
+      width: 400px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
+
     h1 {
-      color: #333;
+      margin-bottom: 20px;
     }
-    #status {
-      font-size: 26px;
+
+    .status {
+      font-size: 22px;
       margin-top: 20px;
-      color: green;
+      padding: 15px;
+      border-radius: 10px;
+      transition: 0.3s ease;
+    }
+
+    .v1 {
+      background: #4caf50;
+    }
+
+    .v2 {
+      background: #ff9800;
+    }
+
+    .loading {
+      background: #607d8b;
+    }
+
+    .dot {
+      height: 10px;
+      width: 10px;
+      background-color: #fff;
+      border-radius: 50%;
+      display: inline-block;
+      margin-left: 5px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.2; }
+      50% { opacity: 1; }
+      100% { opacity: 0.2; }
     }
   </style>
 </head>
 <body>
 
-  <h1>Zero-Downtime Deployment Demo</h1>
-  <p>Frontend polling backend every 1 second</p>
+  <div class="card">
+    <h1>🚀 Zero-Downtime Deployment</h1>
+    <p>Live Backend Monitor</p>
 
-  <div id="status">Connecting...</div>
+    <div id="statusBox" class="status loading">
+      Checking backend<span class="dot"></span>
+    </div>
+  </div>
 
   <script>
-  let lastVersion = "none";
-
-  async function checkBackend() {
-    try {
-      let res = await fetch("http://localhost:3001/version");
-      let data = await res.json();
-      lastVersion = data.version;
-      document.getElementById("status").innerText =
-        "Connected to backend version: " + data.version;
-    } catch {
+    async function checkBackend() {
       try {
+        // Try v1
+        let res = await fetch("http://localhost:3001/version");
+        let data = await res.json();
+        updateUI(data.version);
+        return;
+      } catch {}
+
+      try {
+        // Try v2
         let res = await fetch("http://localhost:3002/version");
         let data = await res.json();
-        lastVersion = data.version;
-        document.getElementById("status").innerText =
-          "Connected to backend version: " + data.version;
-      } catch {
-        document.getElementById("status").innerText =
-          "Switching backend... (no downtime)";
+        updateUI(data.version);
+        return;
+      } catch {}
+
+      showLoading();
+    }
+
+    function updateUI(version) {
+      const box = document.getElementById("statusBox");
+      box.classList.remove("loading");
+
+      if (version === "v1") {
+        box.className = "status v1";
+        box.innerHTML = "🟢 Connected to Backend Version 1";
+      } else {
+        box.className = "status v2";
+        box.innerHTML = "🟡 Connected to Backend Version 2";
       }
     }
-  }
 
-  setInterval(checkBackend, 1000);
-</script>
+    function showLoading() {
+      const box = document.getElementById("statusBox");
+      box.className = "status loading";
+      box.innerHTML = "Switching backend<span class='dot'></span>";
+    }
 
-
+    setInterval(checkBackend, 1000);
+  </script>
 
 </body>
 </html>
+ 
